@@ -16,3 +16,8 @@ local.properties
 captures/
 .externalNativeBuild/
 .cxx/
+
+# Python
+__pycache__/
+*.pyc
+.venv/

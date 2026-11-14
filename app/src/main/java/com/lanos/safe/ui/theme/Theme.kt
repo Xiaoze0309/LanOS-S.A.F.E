@@ -7,40 +7,38 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-// 浅色配色：主色为科技蓝
+// 浅色配色：黑白灰为主
 private val LightColorScheme = lightColorScheme(
-    primary = MiuiBlue,
-    error = SafeRed,
-    background = Color.White
+    primary = Ink,
+    onPrimary = Paper,
+    background = Paper,
+    onBackground = Ink,
+    surface = Paper,
+    onSurface = Ink,
+    surfaceVariant = SoftGray,
+    onSurfaceVariant = GrayMuted,
+    outline = Hairline
 )
 
-// 深色配色：主色为科技蓝，背景为深色
+// 深色配色：近黑背景，白色主色
 private val DarkColorScheme = darkColorScheme(
-    primary = MiuiBlue,
-    error = SafeRed,
-    background = DarkBackground,
-    surface = DarkBackground
+    primary = Paper,
+    onPrimary = Ink,
+    background = Color(0xFF0B0B0F),
+    onBackground = Paper,
+    surface = Color(0xFF16161A),
+    onSurface = Paper,
+    surfaceVariant = Color(0xFF1C1C21),
+    onSurfaceVariant = Color(0xFF8E8E93),
+    outline = Color(0xFF2C2C33)
 )
 
-// 应用主题入口：支持由调用方指定深浅色（可被设置页外观开关控制）
+// 应用主题入口
 @Composable
 fun LanosSafeTheme(
-    // 是否使用深色模式：缺省跟随系统
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // 主题包裹的内容
     content: @Composable () -> Unit
 ) {
-    // 依据参数选择配色方案
-    val colorScheme = if (darkTheme) {
-        DarkColorScheme
-    } else {
-        LightColorScheme
-    }
-
-    // 应用 Material 3 主题
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = SafeTypography,
-        content = content
-    )
+    val scheme = if (darkTheme) DarkColorScheme else LightColorScheme
+    MaterialTheme(colorScheme = scheme, typography = SafeTypography, content = content)
 }
