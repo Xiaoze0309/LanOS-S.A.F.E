@@ -1,0 +1,18 @@
+# Gradle / 构建产物
+.gradle/
+build/
+app/build/
+
+# 本地 SDK 路径（含机器特定路径，不入库）
+local.properties
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# 系统/缓存
+.DS_Store
+captures/
+.externalNativeBuild/
+.cxx/
