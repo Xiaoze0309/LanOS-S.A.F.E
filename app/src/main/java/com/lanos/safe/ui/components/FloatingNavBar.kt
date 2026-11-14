@@ -29,9 +29,8 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import com.lanos.safe.ui.theme.AccentBlue
 import com.lanos.safe.ui.theme.GrayMuted
-import com.lanos.safe.ui.theme.Ink
-import com.lanos.safe.ui.theme.SoftGray
 
 // 底部导航项：选中 / 未选中各一个图标
 private data class NavItem(
@@ -86,8 +85,8 @@ private fun NavBarItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val tint by animateColorAsState(if (selected) Ink else GrayMuted)
-    val highlight by animateColorAsState(if (selected) SoftGray else Color.Transparent)
+    val tint by animateColorAsState(if (selected) AccentBlue else GrayMuted)
+    val highlight by animateColorAsState(if (selected) AccentBlue.copy(alpha = 0.12f) else Color.Transparent)
     val scale by animateFloatAsState(if (selected) 1.1f else 1f)
 
     Box(
@@ -103,7 +102,7 @@ private fun NavBarItem(
             imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
             contentDescription = item.route,
             tint = tint,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(28.dp)
         )
     }
 }

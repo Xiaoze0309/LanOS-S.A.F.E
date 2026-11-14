@@ -7,6 +7,7 @@ val Ink = Color(0xFF1A1A1A)
 val Paper = Color(0xFFFFFFFF)
 val SoftGray = Color(0xFFF2F2F7)
 val GrayMuted = Color(0xFF8E8E93)
+val DarkGray = Color(0xFF3C3C43)
 val Hairline = Color(0xFFE5E5EA)
 
 // 克制使用的辅助色

@@ -17,32 +17,34 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.lanos.safe.ui.theme.DarkGray
 import com.lanos.safe.ui.theme.GrayMuted
 import com.lanos.safe.ui.theme.Hairline
-import com.lanos.safe.ui.theme.Paper
 import com.lanos.safe.ui.theme.SafetyGreen
 import com.lanos.safe.ui.theme.SoftAmber
+import com.lanos.safe.ui.theme.SoftGray
 import com.lanos.safe.ui.theme.SoftRed
 
 // 日志行数据模型
-private data class LogLine(val text: String, val color: Color)
+private data class LogLine(val time: String, val text: String, val color: Color)
 
-// 极简日志区：白色 + 细灰边，三条静态日志带彩色圆点
+// 实时日志流：浅灰底 + 细边，带时间戳与彩色圆点
 @Composable
 fun LogSection(
     modifier: Modifier = Modifier
 ) {
     val logs = listOf(
-        LogLine("已建立安全隧道", SafetyGreen),
-        LogLine("拦截 1 个跟踪请求", SoftAmber),
-        LogLine("检测到异常访问", SoftRed)
+        LogLine("12:58:01", "已建立安全隧道", SafetyGreen),
+        LogLine("12:58:03", "拦截 1 个跟踪请求", SoftAmber),
+        LogLine("12:58:05", "检测到异常访问", SoftRed)
     )
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(Paper, RoundedCornerShape(16.dp))
+            .background(SoftGray, RoundedCornerShape(16.dp))
             .border(1.dp, Hairline, RoundedCornerShape(16.dp))
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
@@ -56,8 +58,15 @@ fun LogSection(
                         .size(8.dp)
                         .background(log.color, CircleShape)
                 )
-                Spacer(modifier = Modifier.width(12.dp))
-                Text(text = log.text, fontSize = 12.sp, color = GrayMuted)
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(
+                    text = log.time,
+                    fontSize = 11.sp,
+                    color = GrayMuted,
+                    fontFamily = FontFamily.Monospace
+                )
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(text = log.text, fontSize = 12.sp, color = DarkGray)
             }
         }
     }

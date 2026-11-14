@@ -1,10 +1,6 @@
 package com.lanos.safe.ui.screens
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,10 +26,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lanos.safe.ui.components.LogSection
+import com.lanos.safe.ui.components.TrafficChart
 import com.lanos.safe.ui.theme.Ink
 import com.lanos.safe.ui.theme.SoftGray
 
-// 首页：没有域名就没有防护
+// 首页：安全监控面板
 @Composable
 fun HomeScreen(
     onConfigureDomain: () -> Unit,
@@ -50,47 +47,27 @@ fun HomeScreen(
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Black
         )
-        StatusCard(hasDomain = hasDomain, onConfigureDomain = onConfigureDomain)
+        if (!hasDomain) {
+            DomainHint(onConfigureDomain = onConfigureDomain)
+        }
+        TrafficCard()
+        MetricsGrid()
         LogSection()
     }
 }
 
-// 核心大卡片：空状态 / 防护状态切换
+// 未配置域名提示条
 @Composable
-private fun StatusCard(hasDomain: Boolean, onConfigureDomain: () -> Unit) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp),
-        colors = CardDefaults.cardColors(containerColor = SoftGray),
-        elevation = CardDefaults.cardElevation(0.dp)
+private fun DomainHint(onConfigureDomain: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(SoftGray, RoundedCornerShape(14.dp))
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        AnimatedContent(
-            targetState = hasDomain,
-            transitionSpec = { fadeIn(tween(300)) togetherWith fadeOut(tween(300)) },
-            label = "statusCard"
-        ) { has ->
-            if (has) {
-                ProtectedContent(hasDomain = has)
-            } else {
-                EmptyContent(onConfigureDomain = onConfigureDomain)
-            }
-        }
-    }
-}
-
-// 空状态：尚未添加域名 + 去配置按钮
-@Composable
-private fun EmptyContent(onConfigureDomain: () -> Unit) {
-    Column(
-        modifier = Modifier.fillMaxWidth().padding(32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        Text(
-            text = "尚未添加域名",
-            style = MaterialTheme.typography.titleMedium,
-            color = Color.Gray
-        )
+        Text(text = "未配置域名", fontWeight = FontWeight.SemiBold)
         Button(
             onClick = onConfigureDomain,
             colors = ButtonDefaults.buttonColors(containerColor = Ink, contentColor = Color.White),
@@ -101,43 +78,47 @@ private fun EmptyContent(onConfigureDomain: () -> Unit) {
     }
 }
 
-// 防护状态：今日已拦截 + 64sp 数字 + 三列数据
+// 流量图表卡片：大数字 + 折线图
 @Composable
-private fun ProtectedContent(hasDomain: Boolean) {
-    Column(
-        modifier = Modifier.fillMaxWidth().padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+private fun TrafficCard() {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = SoftGray),
+        elevation = CardDefaults.cardElevation(0.dp)
     ) {
-        Text(text = "今日已拦截", color = Color.Gray)
-        AnimatedContent(
-            targetState = hasDomain,
-            transitionSpec = { fadeIn(tween(300)) togetherWith fadeOut(tween(300)) },
-            label = "number"
-        ) {
-            Text(
-                text = "0",
-                fontSize = 64.sp,
-                fontWeight = FontWeight.Black,
-                color = Ink
-            )
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            Stat(label = "扫描流量", value = "0 KB")
-            Stat(label = "活跃连接", value = "0")
-            Stat(label = "端口", value = "9090")
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(text = "扫描流量", color = Color.Gray, fontSize = 12.sp)
+            Text(text = "0 KB/s", fontWeight = FontWeight.Black, fontSize = 28.sp, color = Ink)
+            TrafficChart(modifier = Modifier.padding(top = 12.dp))
         }
     }
 }
 
-// 三列灰色数据小列
+// 2x2 数据小方块
 @Composable
-private fun Stat(label: String, value: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = value, fontWeight = FontWeight.SemiBold)
+private fun MetricsGrid() {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            MetricTile(label = "系统负载", value = "23%", modifier = Modifier.weight(1f))
+            MetricTile(label = "活跃连接", value = "0", modifier = Modifier.weight(1f))
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            MetricTile(label = "拦截次数", value = "0", modifier = Modifier.weight(1f))
+            MetricTile(label = "拦截率", value = "98.7%", modifier = Modifier.weight(1f))
+        }
+    }
+}
+
+@Composable
+private fun MetricTile(label: String, value: String, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .background(SoftGray, RoundedCornerShape(16.dp))
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp)
+    ) {
+        Text(text = value, fontWeight = FontWeight.Bold, fontSize = 22.sp)
         Text(text = label, color = Color.Gray, fontSize = 12.sp)
     }
 }
