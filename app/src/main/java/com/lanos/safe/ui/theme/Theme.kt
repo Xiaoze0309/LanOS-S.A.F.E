@@ -22,14 +22,16 @@ private val DarkColorScheme = darkColorScheme(
     surface = DarkBackground
 )
 
-// 应用主题入口：依据系统深浅色模式自动切换配色
+// 应用主题入口：支持由调用方指定深浅色（可被设置页外观开关控制）
 @Composable
 fun LanosSafeTheme(
+    // 是否使用深色模式：缺省跟随系统
+    darkTheme: Boolean = isSystemInDarkTheme(),
     // 主题包裹的内容
     content: @Composable () -> Unit
 ) {
-    // 根据系统设置选择配色方案
-    val colorScheme = if (isSystemInDarkTheme()) {
+    // 依据参数选择配色方案
+    val colorScheme = if (darkTheme) {
         DarkColorScheme
     } else {
         LightColorScheme
