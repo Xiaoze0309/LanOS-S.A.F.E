@@ -2,11 +2,14 @@
 <!-- 应用清单：声明 Activity 与 VPN 服务 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- 网络访问权限 -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <!-- VPN 服务所需权限 -->
     <uses-permission android:name="android.permission.BIND_VPN_SERVICE" />
 
     <application
         android:label="LanOS S.A.F.E"
+        android:usesCleartextTraffic="true"
         android:theme="@android:style/Theme.Material.NoActionBar">
 
         <!-- 应用唯一入口 Activity -->

@@ -87,7 +87,7 @@ private fun NavBarItem(
 ) {
     val tint by animateColorAsState(if (selected) AccentBlue else GrayMuted)
     val highlight by animateColorAsState(if (selected) AccentBlue.copy(alpha = 0.12f) else Color.Transparent)
-    val scale by animateFloatAsState(if (selected) 1.1f else 1f)
+    val scale by animateFloatAsState(if (selected) 1.2f else 1f)
 
     Box(
         modifier = modifier

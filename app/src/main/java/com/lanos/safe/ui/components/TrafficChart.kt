@@ -20,7 +20,8 @@ import kotlin.math.sin
 // 流量趋势折线图：网格线 + 渐变填充 + 波动曲线（模拟实时流量）
 @Composable
 fun TrafficChart(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    seed: Int = 0
 ) {
     Canvas(
         modifier = modifier
@@ -53,8 +54,9 @@ fun TrafficChart(
         // 波动曲线数据点
         val points = List(24) { i ->
             val x = w * i / 23f
-            val y = h * 0.55f - h * 0.25f * sin(i * 0.7f).toFloat() -
-                h * 0.15f * cos(i * 0.4f).toFloat()
+            val phase = (i + seed * 3) * 0.7f
+            val y = h * 0.55f - h * 0.25f * sin(phase).toFloat() -
+                h * 0.15f * cos(phase * 0.6f).toFloat()
             Offset(x, y)
         }
         // 渐变填充路径

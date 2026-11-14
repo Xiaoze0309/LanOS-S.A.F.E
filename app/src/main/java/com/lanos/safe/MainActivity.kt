@@ -13,6 +13,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -66,7 +71,15 @@ private fun LanosSafeApp() {
             NavHost(
                 navController = navController,
                 startDestination = Routes.Home,
-                modifier = Modifier.padding(pad)
+                modifier = Modifier.padding(pad),
+                enterTransition = {
+                    fadeIn(tween(220)) + slideInVertically(tween(220)) { it / 20 }
+                },
+                exitTransition = { fadeOut(tween(160)) },
+                popEnterTransition = { fadeIn(tween(220)) },
+                popExitTransition = {
+                    fadeOut(tween(160)) + slideOutVertically(tween(160)) { it / 20 }
+                }
             ) {
                 composable(Routes.Home) {
                     HomeScreen(onConfigureDomain = { navController.navigate(Routes.Domain) })

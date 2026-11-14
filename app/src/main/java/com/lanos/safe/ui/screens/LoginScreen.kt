@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -19,6 +20,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,23 +31,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 
-// 邮箱登录页（无状态组件）：返回事件经 Lambda 传出
+// 登录 / 注册页：邮箱 + 密码 + 验证码（60 秒倒计时），注册需确认密码
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // 邮箱与验证码输入
+    var isRegister by remember { mutableStateOf(false) }
     var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var confirm by remember { mutableStateOf("") }
     var code by remember { mutableStateOf("") }
-    // 验证码倒计时：0 表示可点击获取
     var countdown by remember { mutableIntStateOf(0) }
 
-    // 倒计时协程：每秒递减，直到归零
+    // 验证码倒计时
     LaunchedEffect(countdown) {
         if (countdown > 0) {
             delay(1000)
@@ -57,7 +62,7 @@ fun LoginScreen(
         modifier = modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text(text = "邮箱登录") },
+                title = { Text(text = if (isRegister) "注册" else "登录") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
@@ -76,7 +81,6 @@ fun LoginScreen(
                 .padding(horizontal = 24.dp, vertical = 32.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // 邮箱输入框
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
@@ -84,7 +88,26 @@ fun LoginScreen(
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
-            // 验证码输入框 + 内嵌获取按钮
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text(text = "密码") },
+                singleLine = true,
+                visualTransformation = PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                modifier = Modifier.fillMaxWidth()
+            )
+            if (isRegister) {
+                OutlinedTextField(
+                    value = confirm,
+                    onValueChange = { confirm = it },
+                    label = { Text(text = "确认密码") },
+                    singleLine = true,
+                    visualTransformation = PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
@@ -108,12 +131,11 @@ fun LoginScreen(
                     )
                 }
             }
-            // 登录按钮：模拟验证成功并返回
-            Button(
-                onClick = onBack,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "登录")
+            Button(onClick = onBack, modifier = Modifier.fillMaxWidth()) {
+                Text(text = if (isRegister) "注册" else "登录")
+            }
+            TextButton(onClick = { isRegister = !isRegister }, modifier = Modifier.fillMaxWidth()) {
+                Text(text = if (isRegister) "已有账号？去登录" else "没有账号？去注册")
             }
         }
     }
