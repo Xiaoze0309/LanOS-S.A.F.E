@@ -1,11 +1,14 @@
 # 名称：推送到 main 时自动构建 Android Debug APK
 name: Build Android APK
 
-# 触发条件：仅 main 分支的 push
+# 触发条件：main 分支 push、打标签、或手动运行
 on:
+  workflow_dispatch:
   push:
     branches:
       - "main"
+    tags:
+      - "v*"
 
 # 授予 job 的最小权限（只读仓库内容）
 permissions:

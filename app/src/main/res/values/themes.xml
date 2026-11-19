@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 启动主题：避免冷启动时白屏闪烁，状态栏交给 enableEdgeToEdge 处理 -->
+    <style name="Theme.LanosSafe" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/lanos_bg</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+</resources>

@@ -1,0 +1,42 @@
+# 一条命令拉起「MariaDB + 后端」，Windows / Linux / macOS 通用（需 Docker Desktop）
+#   docker compose up -d --build
+#   curl http://127.0.0.1:8000/api/v1/system/health
+
+name: lanos-safe
+
+services:
+  db:
+    image: mariadb:11.8
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: ""
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "1"
+      MARIADB_DATABASE: lanos_safe
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 24
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      MYSQL_URL: mysql+asyncmy://root:@db:3306/lanos_safe
+      SECRET_KEY: ${SECRET_KEY:-dev-secret-please-change}
+      DEV_MODE: ${DEV_MODE:-true}
+      INGEST_KEY: ${INGEST_KEY:-change-me-ingest-key}
+      CORS_ORIGINS: "*"
+    ports:
+      - "8000:8000"
+
+volumes:
+  db_data:

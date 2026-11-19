@@ -1,0 +1,69 @@
+# 后端桌面版：PyInstaller 打包成 Windows / Linux / macOS 的单文件可执行程序
+# 触发：手动运行（Actions 页 Run workflow）或推送 v* 标签
+name: Build desktop backend
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  binary:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            name: linux-x64
+            artifact: lanos-backend-linux-x64
+          - os: windows-latest
+            name: windows-x64
+            artifact: lanos-backend-windows-x64
+          - os: macos-13
+            name: macos-x64
+            artifact: lanos-backend-macos-x64
+          - os: macos-latest
+            name: macos-arm64
+            artifact: lanos-backend-macos-arm64
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install backend deps
+        working-directory: backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pyinstaller
+
+      - name: Import check
+        working-directory: backend
+        run: python -c "import app.main; print('import ok', app.main.app.version)"
+
+      - name: Build single-file binary
+        working-directory: backend
+        run: pyinstaller lanos-backend.spec --noconfirm --clean
+
+      - name: List artifacts
+        working-directory: backend
+        run: ls -lh dist/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: backend/dist/*
+          if-no-files-found: error

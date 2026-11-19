@@ -14,8 +14,8 @@ android {
         applicationId = "com.lanos.safe"
         minSdk = 24
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 28
+        versionName = "2.8"
     }
 
     buildTypes {
@@ -53,9 +53,14 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.foundation:foundation")
+    implementation("androidx.compose.animation:animation")
     implementation("androidx.compose.material3:material3")
     // Material Icons Extended（严禁 Emoji，必须用矢量图标）
     implementation("androidx.compose.material:material-icons-extended")
+
+    // 协程（网络请求 + 动画状态机）
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
 
     // AndroidX 基础库
     implementation("androidx.core:core-ktx:1.13.1")

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 自适应图标前景：四周留 19dp，避免被启动器按 66% 安全区裁切 -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/ic_logo"
+    android:insetLeft="19dp"
+    android:insetTop="19dp"
+    android:insetRight="19dp"
+    android:insetBottom="19dp" />

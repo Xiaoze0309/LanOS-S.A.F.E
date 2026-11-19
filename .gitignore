@@ -21,3 +21,10 @@ captures/
 __pycache__/
 *.pyc
 .venv/
+
+# 后端本地配置（含密钥，不入库）
+backend/.env
+.env
+
+# 日志
+*.log
