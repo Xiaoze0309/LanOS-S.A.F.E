@@ -13,7 +13,6 @@ hidden = collect_submodules("uvicorn") + [
     "asyncmy",
     "asyncmy.connection",
     "asyncmy.cursors",
-    "asyncmy.consts",
     "sqlalchemy.dialects.mysql.asyncmy",
     "sqlalchemy.dialects.mysql.aiomysql",
     "pydantic_settings",
