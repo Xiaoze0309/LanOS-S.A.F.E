@@ -1,5 +1,5 @@
-# 后端桌面版：PyInstaller 打包成 Windows / Linux / macOS 的单文件可执行程序
-# 触发：手动运行（Actions 页 Run workflow）或推送 v* 标签
+# 后端桌面版：多平台单文件可执行程序
+# 触发：手动运行，或推送 v* 标签
 name: Build desktop backend
 
 on:
@@ -22,6 +22,9 @@ jobs:
           - os: ubuntu-latest
             name: linux-x64
             artifact: lanos-backend-linux-x64
+          - os: ubuntu-24.04-arm
+            name: linux-arm64
+            artifact: lanos-backend-linux-arm64
           - os: windows-latest
             name: windows-x64
             artifact: lanos-backend-windows-x64
@@ -33,11 +36,9 @@ jobs:
             artifact: lanos-backend-macos-arm64
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: pip
@@ -61,9 +62,33 @@ jobs:
         working-directory: backend
         run: ls -lh dist/
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact }}
           path: backend/dist/*
           if-no-files-found: error
+
+  # 32 位 ARM：GitHub 没有 armv7 runner，用 QEMU 在容器里交叉构建（实验性）
+  arm32:
+    name: linux-arm32 (experimental)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm/v7
+
+      - name: Build inside arm32v7 container
+        working-directory: backend
+        run: |
+          docker run --rm --platform linux/arm/v7 \
+            -v "$PWD:/src" -w /src arm32v7/python:3.11-slim \
+            bash -lc "pip install -r requirements.txt pyinstaller && pyinstaller lanos-backend.spec --noconfirm"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lanos-backend-linux-arm32
+          path: backend/dist/*
+          if-no-files-found: warn
