@@ -58,10 +58,6 @@ jobs:
         working-directory: backend
         run: pyinstaller lanos-backend.spec --noconfirm --clean
 
-      - name: List artifacts
-        working-directory: backend
-        run: ls -lh dist/
-
       - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact }}
